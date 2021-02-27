@@ -27,7 +27,9 @@ export default (req:any,method:string,url:string,routes: { [id: string]: Array<a
 
       if(matching == sectionsURL.length){
         var request = new Request(req,params);
-        route.callback(request);
+        request.decodeBody().then(()=>{
+          route.callback(request);
+        })
       }else{
         return;
       }
