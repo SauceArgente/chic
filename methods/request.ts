@@ -6,28 +6,32 @@ const defaultData = {
   body: "",
 };
 
-const decoder = new TextDecoder();
 
 export default class request {
   req: any;
   parameters: objValStrNum;
   data: objValAny;
-  body : string;
+  body : Record<string,any>;
   headers: any;
 
   constructor(req: any, params: objValStrNum) {
     this.req = req;
     this.parameters = params;
     this.data = defaultData;
-    this.body = "";
+    this.body = {};
     this.headers = req.headers;
   }
 
   decodeBody() : Promise<void> {
     return new Promise((resolve,reject)=>{
       Deno.readAll(this.req.body).then(d=>{
-        const json = JSON.parse(decoder.decode(d));
-        this.body = json
+        if(d.length > 0 ){
+          const decoder = new TextDecoder();
+          const json = JSON.parse(decoder.decode(d));
+          this.body = json
+        }else{
+          this.body = {};
+        }
         resolve();
       });
     })
